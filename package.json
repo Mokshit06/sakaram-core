@@ -1,0 +1,16 @@
+{
+  "name": "core-2021",
+  "private": true,
+  "version": "1.0.0",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dashboard": "yarn workspace dashboard dev",
+    "web": "yarn workspace web dev"
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.1"
+  }
+}
