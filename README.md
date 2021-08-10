@@ -2,7 +2,7 @@
 
 ## Tasks
 
-- [ ] 3d car visualizer
+- [ ] 3d car visualizer (r3f)
 - [ ] rotate car based on device orientation
 - [ ] visualize the car dashboard
 - [ ] show the car moving in a direction using accelerometer
