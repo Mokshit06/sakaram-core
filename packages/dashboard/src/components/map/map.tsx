@@ -61,10 +61,15 @@ export default function Map() {
             ]);
             const map = mapRef.current!;
 
-            map.fitBounds([
-              new mapboxgl.LngLat(...originCoords),
-              new mapboxgl.LngLat(...destinationCoords),
-            ]);
+            console.log({ originCoords, destinationCoords });
+
+            map.fitBounds(
+              [
+                new mapboxgl.LngLat(...originCoords),
+                new mapboxgl.LngLat(...destinationCoords),
+              ],
+              { bearing: 0, pitch: 0, zoom: 14 }
+            );
 
             const directionsData = await getDirections(
               originCoords,
@@ -105,12 +110,6 @@ export default function Map() {
                   'line-width': 12,
                   'line-opacity': 0.75,
                 },
-              });
-
-              map.flyTo({
-                pitch: 0,
-                bearing: 0,
-                zoom: 8,
               });
             }
           };

@@ -1,6 +1,6 @@
 import create from 'zustand';
 
-type Direction = {};
+type Direction = string;
 type Point = {
   type?: 'Feature';
   geometry?: {

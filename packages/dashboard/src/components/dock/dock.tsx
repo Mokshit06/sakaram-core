@@ -1,6 +1,6 @@
 import useDirections from '@/hooks/use-directions';
-import { motion, VisualElementLifecycles } from 'framer-motion';
-import { RefObject, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { RefObject, useEffect, useRef } from 'react';
 import styles from './dock.module.css';
 
 type DockProps = {
@@ -25,6 +25,10 @@ export default function Dock({ containerRef }: DockProps) {
     return 0;
   };
 
+  useEffect(() => {
+    console.log(directions);
+  }, [directions]);
+
   return (
     <motion.div
       className={styles.dock}
@@ -42,6 +46,23 @@ export default function Dock({ containerRef }: DockProps) {
       drag
       dragConstraints={containerRef}
       dragElastic={1}
-    ></motion.div>
+    >
+      <ul style={{ overflow: 'hidden' }}>
+        <AnimatePresence initial={false}>
+          {directions.map((direction, index) => {
+            return (
+              <motion.li
+                key={`${direction}-${index}`}
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }}
+              >
+                {direction}
+              </motion.li>
+            );
+          })}
+        </AnimatePresence>
+      </ul>
+    </motion.div>
   );
 }
