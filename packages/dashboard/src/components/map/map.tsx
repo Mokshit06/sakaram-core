@@ -1,9 +1,6 @@
 import mapboxgl from 'mapbox-gl';
 import { useRouter } from 'next/dist/client/router';
-import { useReducer } from 'react';
-import { useRef } from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSpeechRecognition } from 'react-speech-recognition';
 import styles from './map.module.css';
 
@@ -37,6 +34,7 @@ type TranscriptData = {
   data?: any;
 };
 
+// TODO use dialogflow instead of regex
 function getTranscriptData(transcript: string): TranscriptData | null {
   transcript = transcript.trim();
   let data: TranscriptData | null = null;
@@ -67,29 +65,6 @@ function getTranscriptData(transcript: string): TranscriptData | null {
 }
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
-
-// function reducer(
-//   state: { target: string | null },
-//   action: { type: TranscriptDataType; data?: any }
-// ) {
-//   switch (action.type) {
-//     case 'DIRECTION': {
-//       return {
-//         target: action.data,
-//       };
-//     }
-//     case 'START': {
-//       return {
-//         target: null,
-//       };
-//     }
-//     case 'OPEN_APP': {
-//       return {
-//         target: null,
-//       };
-//     }
-//   }
-// }
 
 export default function Map() {
   const router = useRouter();
@@ -131,10 +106,14 @@ export default function Map() {
 
   useEffect(() => {
     const map = new mapboxgl.Map({
-      container: 'map',
       style: 'mapbox://styles/mokshit06/cks6ysuez0lvb18qn8fa2zvdb',
-      center: [-74.5, 40],
-      zoom: 0,
+      // default coords
+      center: [-74.0066, 40.7135],
+      zoom: 15.5,
+      pitch: 45,
+      bearing: -17.6,
+      container: 'map',
+      antialias: true,
     });
 
     const geolocationControl = new mapboxgl.GeolocateControl({
@@ -151,7 +130,47 @@ export default function Map() {
     map.addControl(geolocationControl);
 
     map.on('load', () => {
-      geolocationControl.trigger();
+      const layers = map.getStyle().layers;
+
+      if (!layers) return;
+
+      const labelLayerId = layers.find(
+        layer => layer.type === 'symbol' && layer.layout?.['text-field']
+      )?.id;
+
+      map.addLayer(
+        {
+          id: 'add-3d-buildings',
+          source: 'composite',
+          'source-layer': 'building',
+          filter: ['==', 'extrude', 'true'],
+          type: 'fill-extrusion',
+          minzoom: 15,
+          paint: {
+            'fill-extrusion-color': '#0a0f16',
+            'fill-extrusion-height': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'height'],
+            ],
+            'fill-extrusion-base': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'min_height'],
+            ],
+            'fill-extrusion-opacity': 0.8,
+          },
+        },
+        labelLayerId
+      );
     });
 
     return () => {
