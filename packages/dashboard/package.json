@@ -12,13 +12,19 @@
     "@react-three/drei": "^7.3.1",
     "@react-three/fiber": "^7.0.6",
     "framer-motion": "^4.1.17",
+    "mapbox-gl": "^2.4.0",
     "next": "11.0.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "three": "^0.131.3"
+    "react-speech-recognition": "^3.8.2",
+    "regenerator-runtime": "^0.13.9",
+    "three": "^0.131.3",
+    "zustand": "^3.5.7"
   },
   "devDependencies": {
+    "@types/mapbox-gl": "^2.4.0",
     "@types/react": "17.0.16",
+    "@types/react-speech-recognition": "^3.6.1",
     "@types/three": "^0.131.0",
     "eslint": "7.32.0",
     "eslint-config-next": "11.0.1",

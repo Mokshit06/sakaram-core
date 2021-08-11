@@ -1,0 +1,12 @@
+.mapWrapper {
+  position: relative;
+  height: 100vh;
+  width: calc(100vw - var(--nav-width));
+}
+
+.map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
