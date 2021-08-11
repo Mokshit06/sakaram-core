@@ -1,18 +1,13 @@
-import mapboxgl from 'mapbox-gl';
-import { useEffect, useRef, useState } from 'react';
-import { useSpeechRecognition } from 'react-speech-recognition';
+import useDirections from '@/hooks/use-directions';
 import Directions from '@/types/directions';
 import Geocode from '@/types/geocode';
-import styles from './map.module.css';
-import useDirections from '@/hooks/use-directions';
 import type { Feature, GeoJsonProperties, Geometry } from 'geojson';
+import mapboxgl from 'mapbox-gl';
+import { useEffect, useRef } from 'react';
+import { useSpeechRecognition } from 'react-speech-recognition';
+import styles from './map.module.css';
 
 type Coords = [lon: number, lat: number];
-
-// const DIRECTION_REGEX =
-//   /^directions? from (?<origin>(\w+|\s+)+) to (?<destination>(\w+|\s+)+)/i;
-// const START_REGEX = /^start$/i;
-// const OPEN_APP_REGEX = /^open (?<appName>)$/i;
 
 function formatDirectionsURL(origin: Coords, destination: Coords) {
   return `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${encodeURIComponent(
@@ -42,49 +37,6 @@ async function getDirections(from: Coords, to: Coords) {
 
   return data;
 }
-
-// type TranscriptData =
-//   | {
-//       type: 'DIRECTION';
-//       data: { destination: string; origin: string };
-//     }
-//   | { type: 'START' }
-//   | { type: 'OPEN_APP'; data: string };
-
-// // TODO use dialogflow instead of regex
-// function getTranscriptData(transcript: string): TranscriptData | null {
-//   transcript = transcript.trim();
-//   console.log({ transcript });
-//   let data: TranscriptData | null = null;
-
-//   if (transcript.match(DIRECTION_REGEX)) {
-//     const result = DIRECTION_REGEX.exec(transcript);
-
-//     if (result?.groups?.origin && result?.groups?.destination) {
-//       data = {
-//         type: 'DIRECTION',
-//         data: result.groups as { origin: string; destination: string },
-//       };
-//     }
-//   } else if (transcript.match(START_REGEX)) {
-//     data = { type: 'START' };
-//   } else if (transcript.match(OPEN_APP_REGEX)) {
-//     const result = OPEN_APP_REGEX.exec(transcript);
-
-//     if (result?.groups?.appName) {
-//       data = {
-//         type: 'OPEN_APP',
-//         data: result.groups.appName,
-//       };
-//     }
-//   } else {
-//     console.log("COULDN'T UNDERSTAND");
-//   }
-
-//   return data;
-// }
-
-function createPoint() {}
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
@@ -150,7 +102,7 @@ export default function Map() {
                 },
                 paint: {
                   'line-color': '#066adb',
-                  'line-width': 10,
+                  'line-width': 12,
                   'line-opacity': 0.75,
                 },
               });
@@ -158,7 +110,7 @@ export default function Map() {
               map.flyTo({
                 pitch: 0,
                 bearing: 0,
-                zoom: 10,
+                zoom: 8,
               });
             }
           };
@@ -166,13 +118,21 @@ export default function Map() {
           showDirections();
         },
       },
+      {
+        command: '*',
+        callback: console.log,
+      },
     ],
   });
 
   useEffect(() => {
-    const watchId = navigator.geolocation.watchPosition(({ coords }) => {
-      currentCoords.current = [coords.longitude, coords.latitude];
-    });
+    const watchId = navigator.geolocation.watchPosition(
+      ({ coords }) => {
+        currentCoords.current = [coords.longitude, coords.latitude];
+      },
+      err => console.error(err),
+      { enableHighAccuracy: true }
+    );
 
     return () => {
       navigator.geolocation.clearWatch(watchId);
@@ -205,14 +165,6 @@ export default function Map() {
     });
 
     geolocationControlRef.current = geolocationControl;
-
-    geolocationControl.on('geolocate', data => {
-      const geoData = data as GeolocationPosition;
-      currentCoords.current = [
-        geoData.coords.longitude,
-        geoData.coords.latitude,
-      ];
-    });
 
     map.addControl(geolocationControl);
 

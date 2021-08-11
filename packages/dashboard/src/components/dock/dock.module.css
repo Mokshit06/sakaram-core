@@ -1,0 +1,8 @@
+.dock {
+  background: white;
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  position: absolute;
+  z-index: 10;
+}
