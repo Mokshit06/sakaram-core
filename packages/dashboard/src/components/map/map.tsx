@@ -1,108 +1,183 @@
 import mapboxgl from 'mapbox-gl';
-import { useRouter } from 'next/dist/client/router';
 import { useEffect, useRef, useState } from 'react';
 import { useSpeechRecognition } from 'react-speech-recognition';
+import Directions from '@/types/directions';
+import Geocode from '@/types/geocode';
 import styles from './map.module.css';
+import useDirections from '@/hooks/use-directions';
+import type { Feature, GeoJsonProperties, Geometry } from 'geojson';
 
-type Coords = {
-  lon: number;
-  lat: number;
-};
+type Coords = [lon: number, lat: number];
 
-/**
- * matches against :-
- * - `directions for delhi`
- * - `drive to delhi`
- * - `direction for delhi india`
- */
-const DIRECTION_REGEX =
-  /^(directions?|drive) (to|for) (?<location>(\w+|\s+)+)/i;
-const START_REGEX = /^start$/i;
-const OPEN_APP_REGEX = /^open (?<appName>)$/i;
+// const DIRECTION_REGEX =
+//   /^directions? from (?<origin>(\w+|\s+)+) to (?<destination>(\w+|\s+)+)/i;
+// const START_REGEX = /^start$/i;
+// const OPEN_APP_REGEX = /^open (?<appName>)$/i;
 
-function formatDirectionsURL(from: Coords, to: Coords) {
-  return `https://api.mapbox.com/directions/v5/mapbox/driving/${encodeURIComponent(
-    `${from.lon},${from.lat};${to.lon},${to.lat}`
+function formatDirectionsURL(origin: Coords, destination: Coords) {
+  return `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${encodeURIComponent(
+    `${origin.join(',')};${destination.join(',')}`
   )}?alternatives=true&geometries=geojson&steps=true&access_token=${
     process.env.NEXT_PUBLIC_MAPBOX_TOKEN
   }`;
 }
 
-type TranscriptDataType = 'DIRECTION' | 'START' | 'OPEN_APP';
-type TranscriptData = {
-  type: TranscriptDataType;
-  data?: any;
-};
+function formatGeocodeURL(location: string) {
+  return `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+    location
+  )}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`;
+}
 
-// TODO use dialogflow instead of regex
-function getTranscriptData(transcript: string): TranscriptData | null {
-  transcript = transcript.trim();
-  let data: TranscriptData | null = null;
+async function geocodeLocation(location: string): Promise<Coords> {
+  const res = await fetch(formatGeocodeURL(location));
+  const data = (await res.json()) as Geocode.RootObject;
+  const [lon, lat] = data.features[0].center;
 
-  if (transcript.match(DIRECTION_REGEX)) {
-    const result = DIRECTION_REGEX.exec(transcript);
+  return [lon, lat];
+}
 
-    if (result?.groups?.location) {
-      data = {
-        type: 'DIRECTION',
-        data: result.groups.location,
-      };
-    }
-  } else if (transcript.match(START_REGEX)) {
-    data = { type: 'START' };
-  } else if (transcript.match(OPEN_APP_REGEX)) {
-    const result = OPEN_APP_REGEX.exec(transcript);
-
-    if (result?.groups?.appName) {
-      data = {
-        type: 'OPEN_APP',
-        data: result.groups.appName,
-      };
-    }
-  }
+async function getDirections(from: Coords, to: Coords) {
+  const res = await fetch(formatDirectionsURL(from, to));
+  const data = (await res.json()) as Directions.RootObject;
 
   return data;
 }
 
+// type TranscriptData =
+//   | {
+//       type: 'DIRECTION';
+//       data: { destination: string; origin: string };
+//     }
+//   | { type: 'START' }
+//   | { type: 'OPEN_APP'; data: string };
+
+// // TODO use dialogflow instead of regex
+// function getTranscriptData(transcript: string): TranscriptData | null {
+//   transcript = transcript.trim();
+//   console.log({ transcript });
+//   let data: TranscriptData | null = null;
+
+//   if (transcript.match(DIRECTION_REGEX)) {
+//     const result = DIRECTION_REGEX.exec(transcript);
+
+//     if (result?.groups?.origin && result?.groups?.destination) {
+//       data = {
+//         type: 'DIRECTION',
+//         data: result.groups as { origin: string; destination: string },
+//       };
+//     }
+//   } else if (transcript.match(START_REGEX)) {
+//     data = { type: 'START' };
+//   } else if (transcript.match(OPEN_APP_REGEX)) {
+//     const result = OPEN_APP_REGEX.exec(transcript);
+
+//     if (result?.groups?.appName) {
+//       data = {
+//         type: 'OPEN_APP',
+//         data: result.groups.appName,
+//       };
+//     }
+//   } else {
+//     console.log("COULDN'T UNDERSTAND");
+//   }
+
+//   return data;
+// }
+
+function createPoint() {}
+
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
 export default function Map() {
-  const router = useRouter();
-  const { finalTranscript } = useSpeechRecognition();
-  const [targetLocation, setTargetLocation] = useState<string | null>(null);
-  const targetLocationRef = useRef<string | null>(null);
+  const { routeIndex, setDirections, setRouteIndex } = useDirections();
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const geolocationControlRef = useRef<mapboxgl.GeolocateControl | null>(null);
+  const currentCoords = useRef<Coords | null>(null);
+  const { finalTranscript } = useSpeechRecognition({
+    commands: [
+      {
+        command: '(show) directions from * to *',
+        callback: (origin, destination) => {
+          const showDirections = async () => {
+            setRouteIndex(0);
+
+            const [originCoords, destinationCoords] = await Promise.all([
+              origin.toLowerCase() === 'my location'
+                ? Promise.resolve(currentCoords.current!)
+                : geocodeLocation(origin),
+              geocodeLocation(destination),
+            ]);
+            const map = mapRef.current!;
+
+            map.fitBounds([
+              new mapboxgl.LngLat(...originCoords),
+              new mapboxgl.LngLat(...destinationCoords),
+            ]);
+
+            const directionsData = await getDirections(
+              originCoords,
+              destinationCoords
+            );
+            const route = directionsData.routes[routeIndex];
+            const directions = route.legs[0].steps.map(step => {
+              return step.maneuver.instruction;
+            });
+
+            setDirections(directions);
+
+            const geojson: Feature<Geometry, GeoJsonProperties> = {
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: route.geometry.coordinates,
+              },
+            };
+
+            if (map.getSource('route')) {
+              (map.getSource('route') as any).setData(geojson);
+            } else {
+              map.addLayer({
+                id: 'route',
+                type: 'line',
+                source: {
+                  type: 'geojson',
+                  data: geojson,
+                },
+                layout: {
+                  'line-join': 'round',
+                  'line-cap': 'round',
+                },
+                paint: {
+                  'line-color': '#066adb',
+                  'line-width': 10,
+                  'line-opacity': 0.75,
+                },
+              });
+
+              map.flyTo({
+                pitch: 0,
+                bearing: 0,
+                zoom: 10,
+              });
+            }
+          };
+
+          showDirections();
+        },
+      },
+    ],
+  });
 
   useEffect(() => {
-    targetLocationRef.current = targetLocation;
-  }, [targetLocation]);
+    const watchId = navigator.geolocation.watchPosition(({ coords }) => {
+      currentCoords.current = [coords.longitude, coords.latitude];
+    });
 
-  useEffect(() => {
-    const data = getTranscriptData(finalTranscript);
-    if (!data) return;
-
-    // TODO respond with something
-    switch (data.type) {
-      case 'DIRECTION': {
-        console.log('SHOWING DIRECTIONS');
-        setTargetLocation(data.data);
-        break;
-      }
-      case 'START': {
-        if (targetLocationRef.current) {
-          console.log('DRIVE STARTED');
-          // TODO show directions and route on map
-        } else {
-          // TODO respond with some error
-        }
-      }
-      case 'OPEN_APP': {
-        console.log('OPENING APP');
-        // TODO slide in the app mentioned
-        setTargetLocation(null);
-        break;
-      }
-    }
-  }, [finalTranscript]);
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -116,6 +191,8 @@ export default function Map() {
       antialias: true,
     });
 
+    mapRef.current = map;
+
     const geolocationControl = new mapboxgl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true,
@@ -125,6 +202,16 @@ export default function Map() {
       },
       trackUserLocation: true,
       showUserHeading: true,
+    });
+
+    geolocationControlRef.current = geolocationControl;
+
+    geolocationControl.on('geolocate', data => {
+      const geoData = data as GeolocationPosition;
+      currentCoords.current = [
+        geoData.coords.longitude,
+        geoData.coords.latitude,
+      ];
     });
 
     map.addControl(geolocationControl);

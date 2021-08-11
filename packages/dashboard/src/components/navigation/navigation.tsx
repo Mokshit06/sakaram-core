@@ -5,7 +5,7 @@ import SpeechRecognition, {
 import styles from './navigation.module.css';
 
 export default function Navigation() {
-  const { listening } = useSpeechRecognition();
+  const { listening, resetTranscript } = useSpeechRecognition();
   const iconRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
@@ -40,11 +40,15 @@ export default function Navigation() {
         <img
           className={`${styles.voice}`}
           ref={iconRef}
-          onClick={() =>
-            listening
-              ? SpeechRecognition.stopListening()
-              : SpeechRecognition.startListening()
-          }
+          onClick={() => {
+            if (listening) {
+              SpeechRecognition.stopListening();
+              resetTranscript();
+              return;
+            }
+
+            SpeechRecognition.startListening();
+          }}
           src="/voice-icon.png"
           height={60}
           width={60}
