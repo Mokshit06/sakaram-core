@@ -3,6 +3,7 @@
 import Dock from '@/components/dock/dock';
 import Map from '@/components/map/map';
 import Navigation from '@/components/navigation/navigation';
+import Window from '@/components/window/window';
 import styles from '@/styles/home.module.css';
 import { AnimateSharedLayout } from 'framer-motion';
 import { useRef } from 'react';
@@ -25,6 +26,7 @@ export default function Home() {
           }}
         >
           <Dock containerRef={containerRef} />
+          <Window id="layout" />
           <Map />
         </div>
       </AnimateSharedLayout>

@@ -130,11 +130,9 @@ function MusicWidget() {
         />
       </div>
       <div className={styles.musicInfo}>
-        <div>
-          <span>{currentTrack.name}</span>
-        </div>
-        <div>
-          <span>{currentTrack.artist.name}</span>
+        <div className={styles.authorInfo}>
+          <span className={styles.trackName}>{currentTrack.name}</span>
+          <span className={styles.authorName}>{currentTrack.artist.name}</span>
         </div>
         <div className={styles.musicControls}>
           <button className={styles.prevTrack} onClick={previousTrack}>

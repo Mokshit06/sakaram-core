@@ -102,6 +102,11 @@ declare module Directions {
     code: string;
     uuid: string;
   }
+
+  export interface Error {
+    code: string;
+    message: string;
+  }
 }
 
 export default Directions;

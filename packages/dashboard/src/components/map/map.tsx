@@ -33,9 +33,13 @@ async function geocodeLocation(location: string): Promise<Coords> {
 
 async function getDirections(from: Coords, to: Coords) {
   const res = await fetch(formatDirectionsURL(from, to));
-  const data = (await res.json()) as Directions.RootObject;
+  const data = await res.json();
 
-  return data;
+  if (!res.ok) {
+    throw new Error((data as Directions.Error).code);
+  }
+
+  return data as Directions.RootObject;
 }
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
@@ -49,71 +53,80 @@ export default function Map() {
     commands: [
       {
         command: '(show) directions from * to *',
-        callback: (origin, destination) => {
+        callback: (origin: string, destination: string) => {
           const showDirections = async () => {
             setRouteIndex(0);
 
+            const currentCoordsOrGeocode = (location: string) => {
+              if (location.toLowerCase() === 'my location') {
+                return Promise.resolve(currentCoords.current!);
+              }
+              return geocodeLocation(location);
+            };
+
             const [originCoords, destinationCoords] = await Promise.all([
-              origin.toLowerCase() === 'my location'
-                ? Promise.resolve(currentCoords.current!)
-                : geocodeLocation(origin),
-              geocodeLocation(destination),
+              currentCoordsOrGeocode(origin),
+              currentCoordsOrGeocode(destination),
             ]);
             const map = mapRef.current!;
-
-            console.log({ originCoords, destinationCoords });
 
             map.fitBounds(
               [
                 new mapboxgl.LngLat(...originCoords),
                 new mapboxgl.LngLat(...destinationCoords),
               ],
-              { bearing: 0, pitch: 0, zoom: 14 }
+              { bearing: 0, pitch: 0, padding: 80 }
             );
 
-            const directionsData = await getDirections(
-              originCoords,
-              destinationCoords
-            );
-            const route = directionsData.routes[routeIndex];
-            const directions = route.legs[0].steps.map(step => {
-              return {
-                instruction: step.maneuver.instruction,
-                modifier: step.maneuver.modifier,
-              };
-            });
-
-            setDirections(directions);
-
-            const geojson: Feature<Geometry, GeoJsonProperties> = {
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'LineString',
-                coordinates: route.geometry.coordinates,
-              },
-            };
-
-            if (map.getSource('route')) {
-              (map.getSource('route') as any).setData(geojson);
-            } else {
-              map.addLayer({
-                id: 'route',
-                type: 'line',
-                source: {
-                  type: 'geojson',
-                  data: geojson,
-                },
-                layout: {
-                  'line-join': 'round',
-                  'line-cap': 'round',
-                },
-                paint: {
-                  'line-color': '#066adb',
-                  'line-width': 12,
-                  'line-opacity': 0.75,
-                },
+            try {
+              const directionsData = await getDirections(
+                originCoords,
+                destinationCoords
+              );
+              const route = directionsData.routes[routeIndex];
+              const directions = route.legs[0].steps.map(step => {
+                return {
+                  instruction: step.maneuver.instruction,
+                  modifier: step.maneuver.modifier,
+                };
               });
+
+              setDirections(directions);
+
+              const geojson: Feature<Geometry, GeoJsonProperties> = {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                  type: 'LineString',
+                  coordinates: route.geometry.coordinates,
+                },
+              };
+
+              if (map.getSource('route')) {
+                (map.getSource('route') as any).setData(geojson);
+              } else {
+                map.addLayer({
+                  id: 'route',
+                  type: 'line',
+                  source: {
+                    type: 'geojson',
+                    data: geojson,
+                  },
+                  layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round',
+                  },
+                  paint: {
+                    'line-color': '#066adb',
+                    'line-width': 12,
+                    'line-opacity': 0.75,
+                  },
+                });
+              }
+            } catch (error) {
+              if (error instanceof Error && error.message === 'InvalidInput') {
+                console.log('Route exceeds maximum limitation');
+              }
             }
           };
 
@@ -121,8 +134,8 @@ export default function Map() {
         },
       },
       {
-        command: '*',
-        callback: console.log,
+        command: /.*/,
+        callback: (...args) => console.log(args),
       },
     ],
   });
