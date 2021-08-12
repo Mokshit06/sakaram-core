@@ -1,8 +1,37 @@
 .dock {
-  background: white;
-  width: 300px;
+  /* background: ; */
+  backdrop-filter: blur(5px) saturate(120%);
+  color: white;
   /* height: 100px; */
-  border-radius: 20px;
+  background-color: rgba(3, 3, 3, 0.5);
+  /* box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.4); */
+  box-shadow: 0 33px 81px rgb(0 0 0 / 31%);
+  width: 30vw;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 1rem 1rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dockContainer {
   position: absolute;
   z-index: 10;
+  padding: 1rem;
+}
+
+.musicContainer {
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(87, 87, 87, 0.1);
+}
+
+.artistImage {
+  height: 100px;
+  border-radius: 4px 0 0 4px;
+  /* height: 100px; */
+  width: auto;
+  display: block;
 }

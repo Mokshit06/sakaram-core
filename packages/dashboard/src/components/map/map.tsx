@@ -77,7 +77,10 @@ export default function Map() {
             );
             const route = directionsData.routes[routeIndex];
             const directions = route.legs[0].steps.map(step => {
-              return step.maneuver.instruction;
+              return {
+                instruction: step.maneuver.instruction,
+                modifier: step.maneuver.modifier,
+              };
             });
 
             setDirections(directions);

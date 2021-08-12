@@ -1,6 +1,10 @@
 import create from 'zustand';
 
-type Direction = string;
+type Direction = {
+  instruction: string;
+  modifier: string;
+};
+
 type Point = {
   type?: 'Feature';
   geometry?: {
