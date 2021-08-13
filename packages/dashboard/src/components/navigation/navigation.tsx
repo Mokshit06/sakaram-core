@@ -1,3 +1,4 @@
+import useWindow, { Apps } from '@/hooks/use-window';
 import { useEffect, useRef } from 'react';
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -6,6 +7,7 @@ import styles from './navigation.module.css';
 
 export default function Navigation() {
   const { listening, resetTranscript } = useSpeechRecognition();
+  const openApp = useWindow(state => state.openApp);
   const iconRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export default function Navigation() {
           width={60}
           alt=""
         />
-        <h1>A</h1>
+        <h1 onClick={() => openApp(Apps.SPOTIFY)}>A</h1>
         <h1>A</h1>
         <h1>A</h1>
         <h1>A</h1>

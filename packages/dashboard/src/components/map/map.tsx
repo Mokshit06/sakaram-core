@@ -1,6 +1,7 @@
 import useDirections from '@/hooks/use-directions';
 import Directions from '@/types/directions';
 import Geocode from '@/types/geocode';
+import { motion } from 'framer-motion';
 import type { Feature, GeoJsonProperties, Geometry } from 'geojson';
 import mapboxgl from 'mapbox-gl';
 import { useEffect, useRef } from 'react';
@@ -26,9 +27,8 @@ function formatGeocodeURL(location: string) {
 async function geocodeLocation(location: string): Promise<Coords> {
   const res = await fetch(formatGeocodeURL(location));
   const data = (await res.json()) as Geocode.RootObject;
-  const [lon, lat] = data.features[0].center;
 
-  return [lon, lat];
+  return data.features[0].center as Coords;
 }
 
 async function getDirections(from: Coords, to: Coords) {
@@ -186,6 +186,8 @@ export default function Map() {
     map.on('load', () => {
       const layers = map.getStyle().layers;
 
+      geolocationControl.trigger();
+
       if (!layers) return;
 
       const labelLayerId = layers.find(
@@ -233,8 +235,8 @@ export default function Map() {
   }, []);
 
   return (
-    <div className={styles.mapWrapper}>
+    <motion.div className={styles.mapWrapper}>
       <div id="map" className={styles.map}></div>
-    </div>
+    </motion.div>
   );
 }

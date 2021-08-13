@@ -1,0 +1,8 @@
+.appWrapper {
+  width: 60vw;
+  padding: 1rem 1rem 0 1rem;
+  height: 100vh;
+  position: absolute;
+  will-change: transform;
+  z-index: 10;
+}

@@ -54,10 +54,8 @@ export default function Dock({ containerRef }: DockProps) {
       dragElastic={1}
     >
       <div className={styles.dock}>
-        <AnimatePresence initial={false}>
-          <MusicWidget />
-          <Directions />
-        </AnimatePresence>
+        <MusicWidget />
+        <Directions />
       </div>
     </motion.div>
   );
@@ -68,7 +66,7 @@ function Directions() {
 
   return (
     <ul style={{ overflow: 'hidden' }}>
-      <AnimatePresence initial={false}>
+      <AnimatePresence>
         {directions.map((direction, index) => {
           return (
             <motion.li

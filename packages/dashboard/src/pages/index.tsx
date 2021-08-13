@@ -5,8 +5,8 @@ import Map from '@/components/map/map';
 import Navigation from '@/components/navigation/navigation';
 import Window from '@/components/window/window';
 import styles from '@/styles/home.module.css';
-import { AnimateSharedLayout } from 'framer-motion';
-import { useRef } from 'react';
+import { AnimateSharedLayout, AnimatePresence, motion } from 'framer-motion';
+import { useRef, useState } from 'react';
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,20 +16,18 @@ export default function Home() {
       <Navigation />
       {/* <CarWindow /> */}
       {/* <Car /> */}
-      <AnimateSharedLayout>
-        <div
-          ref={containerRef}
-          style={{
-            position: 'relative',
-            overflow: 'hidden',
-            width: 'calc(100vw - var(--nav-width))',
-          }}
-        >
-          <Dock containerRef={containerRef} />
-          <Window id="layout" />
-          <Map />
-        </div>
-      </AnimateSharedLayout>
+      <div
+        ref={containerRef}
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+          width: 'calc(100vw - var(--nav-width))',
+        }}
+      >
+        <Dock containerRef={containerRef} />
+        <Window containerRef={containerRef} />
+        <Map />
+      </div>
     </div>
   );
 }
