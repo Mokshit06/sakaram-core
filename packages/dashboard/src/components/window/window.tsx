@@ -1,11 +1,8 @@
 import useWindow, { Apps } from '@/hooks/use-window';
 import { AnimatePresence, motion } from 'framer-motion';
-import { RefObject, useState } from 'react';
 import styles from './window.module.css';
 
-export default function Window(props: {
-  containerRef: RefObject<HTMLDivElement>;
-}) {
+export default function Window() {
   const { isOpen, closeApp } = useWindow();
 
   return (
@@ -39,7 +36,7 @@ export default function Window(props: {
 }
 
 function App() {
-  const { app } = useWindow();
+  const app = useWindow(state => state.app);
 
   switch (app) {
     case Apps.SPOTIFY: {

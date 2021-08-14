@@ -63,18 +63,18 @@ const useMusic = create<MusicState>(
             url: '',
           },
           {
-            artist: { name: 'Tamino' },
+            artist: { name: 'Lauv' },
             duration: 196226,
             image:
-              'https://i.scdn.co/image/ab67616d00004851225a21d90651e86f8cee6b19',
-            name: 'Second song',
+              'https://i.scdn.co/image/ab67616d0000b2736047672696efe2a146cf309e',
+            name: 'Feelings',
             url: '',
           },
         ],
       }),
       {
         name: 'sakaram-music',
-        blacklist: ['tracks', 'isPlaying'],
+        whitelist: ['currentTime', 'currentTrackIndex'],
       }
     )
   )

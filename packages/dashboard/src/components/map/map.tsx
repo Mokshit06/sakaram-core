@@ -1,4 +1,5 @@
 import useDirections from '@/hooks/use-directions';
+import useWindow from '@/hooks/use-window';
 import Directions from '@/types/directions';
 import Geocode from '@/types/geocode';
 import { motion } from 'framer-motion';
@@ -46,6 +47,7 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
 export default function Map() {
   const { routeIndex, setDirections, setRouteIndex } = useDirections();
+  const isOpen = useWindow(state => state.isOpen);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const geolocationControlRef = useRef<mapboxgl.GeolocateControl | null>(null);
   const currentCoords = useRef<Coords | null>(null);
@@ -75,7 +77,7 @@ export default function Map() {
                 new mapboxgl.LngLat(...originCoords),
                 new mapboxgl.LngLat(...destinationCoords),
               ],
-              { bearing: 0, pitch: 0, padding: 80 }
+              { bearing: 0, pitch: 0, padding: 100 }
             );
 
             try {
@@ -141,6 +143,22 @@ export default function Map() {
   });
 
   useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const containerWidth = getComputedStyle(
+      document.querySelector<HTMLDivElement>('div#map')!
+    ).width;
+
+    const widthToPanBy = parseInt(containerWidth) / 2.8;
+    const panBy: [number, number] = isOpen
+      ? [-widthToPanBy, 0]
+      : [widthToPanBy, 0];
+
+    map.panBy(panBy, { duration: 500 });
+  }, [isOpen]);
+
+  useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
       ({ coords }) => {
         currentCoords.current = [coords.longitude, coords.latitude];
@@ -186,7 +204,9 @@ export default function Map() {
     map.on('load', () => {
       const layers = map.getStyle().layers;
 
-      geolocationControl.trigger();
+      if (process.env.NODE_ENV === 'production') {
+        geolocationControl.trigger();
+      }
 
       if (!layers) return;
 

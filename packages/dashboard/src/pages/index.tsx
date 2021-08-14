@@ -5,8 +5,7 @@ import Map from '@/components/map/map';
 import Navigation from '@/components/navigation/navigation';
 import Window from '@/components/window/window';
 import styles from '@/styles/home.module.css';
-import { AnimateSharedLayout, AnimatePresence, motion } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -14,18 +13,10 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Navigation />
-      {/* <CarWindow /> */}
       {/* <Car /> */}
-      <div
-        ref={containerRef}
-        style={{
-          position: 'relative',
-          overflow: 'hidden',
-          width: 'calc(100vw - var(--nav-width))',
-        }}
-      >
+      <div ref={containerRef} className={styles.sidePanel}>
         <Dock containerRef={containerRef} />
-        <Window containerRef={containerRef} />
+        <Window />
         <Map />
       </div>
     </div>

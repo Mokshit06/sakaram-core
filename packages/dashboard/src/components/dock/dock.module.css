@@ -22,6 +22,7 @@
 
 .musicContainer {
   border-radius: 4px;
+  position: relative;
   display: flex;
   align-items: center;
   height: 100px;
@@ -29,9 +30,10 @@
   /* background-color: rgba(44, 44, 44, 0.6); */
 }
 
-.artistImage {
+.trackImage {
+  position: relative;
   height: 100px;
-  border-radius: 4px 0 0 4px;
+  border-radius: 5px;
   width: auto;
   display: block;
   pointer-events: none;
@@ -48,7 +50,8 @@
   cursor: pointer;
 }
 
-.authorInfo {
+.artistInfo {
+  position: relative;
   line-height: 1.4;
   color: #efefef;
 }
@@ -58,12 +61,12 @@
   font-weight: 500;
 }
 
-.authorName {
+.artistName {
   font-size: 1rem;
   font-weight: 400;
 }
 
-.authorInfo span {
+.artistInfo span {
   display: block;
 }
 

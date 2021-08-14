@@ -1,8 +1,8 @@
 import useDirections from '@/hooks/use-directions';
 import useMusic from '@/hooks/use-music';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo } from 'react';
-import { RefObject, useCallback, useEffect, useRef } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { RefObject, useCallback, useRef } from 'react';
 import styles from './dock.module.css';
 
 type DockProps = {
@@ -52,6 +52,7 @@ export default function Dock({ containerRef }: DockProps) {
       drag
       dragConstraints={containerRef}
       dragElastic={1}
+      layout
     >
       <div className={styles.dock}>
         <MusicWidget />
@@ -62,7 +63,7 @@ export default function Dock({ containerRef }: DockProps) {
 }
 
 function Directions() {
-  const { directions } = useDirections();
+  const directions = useDirections(state => state.directions);
 
   return (
     <ul style={{ overflow: 'hidden' }}>
@@ -96,7 +97,7 @@ function Direction({
   return (
     <div>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={getModifierIcon(modifier)} alt="" />
+      <img src={getDirectionIcon(modifier)} alt="" />
       <span>{children}</span>
     </div>
   );
@@ -104,7 +105,6 @@ function Direction({
 
 function MusicWidget() {
   const {
-    currentTime,
     currentTrackIndex,
     tracks,
     nextTrack,
@@ -116,22 +116,36 @@ function MusicWidget() {
     () => tracks[currentTrackIndex],
     [currentTrackIndex, tracks]
   );
+  // react didn't hydrate image on the client due to some reason
+  // which caused the image of the first track to show on initial render
+  // even though the `currentTrackIndex` from localStorage was different
+  // whenever `currentTrack` changes, this will rerender the component
+  // forcing react to update the `src`
+  const [image, setImage] = useState('');
+
+  useEffect(() => {
+    setImage(currentTrack.image);
+  }, [currentTrack]);
 
   return (
     <div className={styles.musicContainer}>
       <div>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className={styles.artistImage}
-          src={currentTrack?.image}
-          alt={currentTrack?.name}
+        <motion.img
+          height="100px"
+          width="100px"
+          suppressHydrationWarning
+          key={currentTrack.name}
+          layoutId="track-image"
+          className={styles.trackImage}
+          src={image}
+          alt={currentTrack.name}
         />
       </div>
       <div className={styles.musicInfo}>
-        <div className={styles.authorInfo}>
+        <motion.div layoutId="artist-info" className={styles.artistInfo}>
           <span className={styles.trackName}>{currentTrack.name}</span>
-          <span className={styles.authorName}>{currentTrack.artist.name}</span>
-        </div>
+          <span className={styles.artistName}>{currentTrack.artist.name}</span>
+        </motion.div>
         <div className={styles.musicControls}>
           <button className={styles.prevTrack} onClick={previousTrack}>
             <svg role="img" height="16" width="16" viewBox="0 0 16 16">
@@ -161,7 +175,7 @@ function MusicWidget() {
   );
 }
 
-function getModifierIcon(modifier: string) {
+function getDirectionIcon(modifier: string) {
   switch (modifier) {
     case 'left': {
       return '';

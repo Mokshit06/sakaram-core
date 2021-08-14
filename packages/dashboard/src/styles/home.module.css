@@ -2,3 +2,9 @@
   display: flex;
   --nav-width: 7vw;
 }
+
+.sidePanel {
+  position: relative;
+  overflow: hidden;
+  width: calc(100vw - var(--nav-width));
+}
