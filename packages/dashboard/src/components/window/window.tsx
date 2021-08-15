@@ -1,15 +1,17 @@
-import useWindow, { Apps } from '@/hooks/use-window';
-import { AnimatePresence, motion } from 'framer-motion';
+import useWindow, { AppType } from '@/hooks/use-window';
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
+import Browser from '../browser/browser';
+import Spotify from '../spotify/spotify';
 import styles from './window.module.css';
 
 export default function Window() {
-  const { isOpen, closeApp } = useWindow();
+  const { isOpen, closeApp, app } = useWindow();
+  const App = Apps[app];
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          onClick={() => closeApp()}
           variants={{
             hidden: {
               y: '100vh',
@@ -22,12 +24,11 @@ export default function Window() {
           initial="hidden"
           exit="hidden"
           animate="visible"
+          key={app}
+          // layoutId="app"
           className={styles.appWrapper}
           transition={{ duration: 1, type: 'spring' }}
         >
-          {/* <div
-            style={{ backgroundColor: 'white', height: '100%', width: '100%' }}
-          ></div> */}
           <App />
         </motion.div>
       )}
@@ -35,18 +36,23 @@ export default function Window() {
   );
 }
 
-function App() {
-  const app = useWindow(state => state.app);
+const Apps = {
+  [AppType.SPOTIFY]: Spotify,
+  [AppType.BROWSER]: Browser,
+};
 
-  switch (app) {
-    case Apps.SPOTIFY: {
-      return (
-        <div
-          style={{ backgroundColor: 'white', height: '100%', width: '100%' }}
-        >
-          Spotify
-        </div>
-      );
-    }
-  }
-}
+// function App() {
+//   const app = useWindow(state => state.app);
+
+//   switch (app) {
+//     case Apps.SPOTIFY: {
+//       return (
+//         <div
+//           style={{ backgroundColor: 'white', height: '100%', width: '100%' }}
+//         >
+//           Spotify
+//         </div>
+//       );
+//     }
+//   }
+// }

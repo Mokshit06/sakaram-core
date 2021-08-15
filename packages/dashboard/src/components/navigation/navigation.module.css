@@ -16,6 +16,12 @@
   justify-content: space-evenly;
 }
 
+.icons button {
+  background: black;
+  cursor: pointer;
+  border: none;
+}
+
 .voice {
   cursor: pointer;
 }
@@ -24,6 +30,7 @@
   /* change animation to box-shadow */
   animation: rotate 3s linear infinite;
 }
+
 @keyframes rotate {
   from {
     transform: rotate(0deg);

@@ -1,10 +1,11 @@
 import create from 'zustand';
 
-export const Apps = {
+export const AppType = {
   SPOTIFY: 'SPOTIFY',
+  BROWSER: 'BROWSER',
 } as const;
 
-export type App = keyof typeof Apps;
+export type App = keyof typeof AppType;
 
 type WindowState = {
   isOpen: boolean;
@@ -15,7 +16,7 @@ type WindowState = {
 
 const useWindow = create<WindowState>(set => ({
   isOpen: false,
-  app: Apps.SPOTIFY,
+  app: AppType.SPOTIFY,
   openApp: app => set({ app, isOpen: true }),
   closeApp: () => set({ isOpen: false }),
 }));

@@ -150,12 +150,12 @@ export default function Map() {
       document.querySelector<HTMLDivElement>('div#map')!
     ).width;
 
-    const widthToPanBy = parseInt(containerWidth) / 2.8;
+    const widthToPanBy = parseInt(containerWidth) / 2.5;
     const panBy: [number, number] = isOpen
       ? [-widthToPanBy, 0]
       : [widthToPanBy, 0];
 
-    map.panBy(panBy, { duration: 500 });
+    map.panBy(panBy, { duration: 1000 });
   }, [isOpen]);
 
   useEffect(() => {
