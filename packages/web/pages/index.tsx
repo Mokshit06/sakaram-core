@@ -16,7 +16,7 @@ export default function Home() {
         <p>
           Navigation is central to driving and every car should have a
           live-updating map tailored to the brand and purpose of the vehicle. We
-          designed Mapbox Dash from the ground up, building on live data sourced
+          designed Sakaram from the ground up, building on live data sourced
           from millions of sensors and a gorgeous design that is fully
           customizable to match the trim of each model.
         </p>
@@ -29,13 +29,10 @@ export default function Home() {
           <div className="flex-info">
             <h2>Live traffic and accurate routes, powered by AI</h2>
             <p>
-              Drivers avoid congestion and arrive on time with live traffic
+              Drivers can avoid congestion and arrive on time with live traffic
               created from the over 300 million miles of anonymized telemetry
-              data we collect each day. Billions of probe points collected each
-              day are fed into our processing pipeline to generate traffic. AI
-              filters, aggregates, and predicts live traffic conditions on road
-              segments notifying drivers of the fastest route. Lane level
-              guidance
+              data we collect each day, based on which we provide them with the
+              shortest route.
             </p>
           </div>
         </div>
@@ -70,7 +67,7 @@ export default function Home() {
         </div>
         <div className="flex">
           <div className="flex-info">
-            <h2>Built-in browner</h2>
+            <h2>Built-in browser</h2>
             <p>
               Get access to the entire web platform directly in your car. The
               built-in browser integrates seamlessly with your car and
@@ -88,8 +85,8 @@ export default function Home() {
           <div className="try-text">
             <h2>Try it right now!</h2>
             <p>
-              Get a full walkthrough of Mapbox Dash and learn about deploying it
-              to your cars Get a test drive
+              Try Sakaram and let yourself decide whether this is the best car
+              dashboard interface ever or not!
             </p>
             <a className="link" href={process.env.NEXT_PUBLIC_DASHBOARD_URL}>
               Try
