@@ -214,6 +214,7 @@ a {
 }
 
 .try-container a {
+  display: inline-block;
   color: white;
   padding: 0.7rem 2rem;
   font-size: 1rem;
