@@ -1,0 +1,106 @@
+.container {
+  font-family: spotify-circular;
+  background-color: #121212;
+  height: 100%;
+  width: 100%;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form input {
+  max-width: 500px;
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.6rem 1rem;
+  border: none;
+  line-height: 1.6;
+  font-size: 1.1rem;
+  color: white;
+  border-radius: 5px;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
+
+.form input:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+  outline: none;
+}
+
+.formWrapper {
+  padding: 1rem;
+  background-color: #121212;
+}
+
+.iframeWrapper {
+  flex: 1;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iframeWrapper iframe {
+  border: none;
+}
+
+.loader {
+  font-size: 10px;
+  margin: -50px auto 0;
+  text-indent: -9999em;
+  width: 11em;
+  height: 11em;
+  border-radius: 50%;
+  background: #ffffff;
+  background: linear-gradient(
+    to right,
+    #ffffff 10%,
+    rgba(255, 255, 255, 0) 42%
+  );
+  position: relative;
+  animation: spinner 1.4s infinite linear;
+  transform: translateZ(0);
+}
+
+.loader:before {
+  width: 50%;
+  height: 50%;
+  background: #ffffff;
+  border-radius: 100% 0 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+}
+
+.loader:after {
+  background: #030303;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  content: '';
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

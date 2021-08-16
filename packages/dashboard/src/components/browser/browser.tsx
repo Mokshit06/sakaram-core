@@ -1,5 +1,6 @@
 import useWindow from '@/hooks/use-window';
 import { useEffect, useRef, useState } from 'react';
+import styles from './browser.module.css';
 
 export default function Browser() {
   const closeApp = useWindow(state => state.closeApp);
@@ -17,13 +18,7 @@ export default function Browser() {
       // onClick={e => {
       //   closeApp();
       // }}
-      style={{
-        backgroundColor: 'blue',
-        height: '100%',
-        width: '100%',
-        padding: '1rem',
-        borderRadius: 10,
-      }}
+      className={styles.container}
     >
       <BrowserWindow />
     </div>
@@ -32,28 +27,49 @@ export default function Browser() {
 
 function BrowserWindow() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState('https://hailcore.co');
+  const [isLoading, setLoading] = useState(false);
+  const [html, setHtml] = useState('');
 
   useEffect(() => {
-    if (!url) return;
+    setLoading(true);
+    fetch(`/api/browser?url=${encodeURIComponent(url)}`)
+      .then(r => r.text())
+      .then(html => {
+        setHtml(html);
+        setLoading(false);
+      });
   }, [url]);
 
   return (
-    <div>
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          setUrl(inputRef.current?.value!);
-        }}
+    <>
+      <div className={styles.formWrapper}>
+        <form
+          className={styles.form}
+          onSubmit={e => {
+            e.preventDefault();
+            setUrl(inputRef.current?.value || 'https://hailcore.co');
+          }}
+        >
+          <input
+            defaultValue={url}
+            placeholder="https://hailcore.co"
+            ref={inputRef}
+          />
+        </form>
+      </div>
+      <div
+        className={styles.iframeWrapper}
+        style={{ backgroundColor: isLoading ? '#030303' : undefined }}
       >
-        <input ref={inputRef} />
-        <button>Search</button>
-      </form>
-      <iframe
-        width="100%"
-        height="100%"
-        src={`/api/browser?url=${encodeURIComponent(url)}`}
-      />
-    </div>
+        {isLoading ? (
+          <div>
+            <div className={styles.loader} />
+          </div>
+        ) : (
+          <iframe width="100%" height="100%" srcDoc={html} />
+        )}
+      </div>
+    </>
   );
 }
