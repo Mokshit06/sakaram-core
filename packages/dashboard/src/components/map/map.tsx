@@ -135,10 +135,6 @@ export default function Map() {
           showDirections();
         },
       },
-      {
-        command: /.*/,
-        callback: (...args) => console.log(args),
-      },
     ],
   });
 

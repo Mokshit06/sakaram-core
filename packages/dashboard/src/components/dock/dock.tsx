@@ -66,7 +66,15 @@ function Directions() {
   const directions = useDirections(state => state.directions);
 
   return (
-    <ul style={{ overflow: 'hidden' }}>
+    <ul
+      style={{
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.3rem',
+        marginBottom: '1rem',
+      }}
+    >
       <AnimatePresence>
         {directions.map((direction, index) => {
           return (
@@ -95,7 +103,13 @@ function Direction({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div
+      style={{
+        padding: '0.5rem 1rem',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        borderRadius: '5px',
+      }}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={getDirectionIcon(modifier)} alt="" />
       <span>{children}</span>

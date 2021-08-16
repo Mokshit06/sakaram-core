@@ -1,5 +1,5 @@
 import useWindow, { AppType } from '@/hooks/use-window';
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import Browser from '../browser/browser';
 import Spotify from '../spotify/spotify';
 import styles from './window.module.css';
@@ -21,6 +21,7 @@ export default function Window() {
               transition: { duration: 1, type: 'spring' },
             },
           }}
+          onDoubleClick={() => closeApp()}
           initial="hidden"
           exit="hidden"
           animate="visible"
