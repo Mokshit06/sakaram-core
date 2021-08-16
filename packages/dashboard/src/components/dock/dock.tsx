@@ -72,7 +72,7 @@ function Directions() {
         display: 'flex',
         flexDirection: 'column',
         gap: '0.3rem',
-        marginBottom: '1rem',
+        marginBottom: directions.length > 0 ? '1rem' : '0',
       }}
     >
       <AnimatePresence>

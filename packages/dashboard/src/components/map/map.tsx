@@ -72,6 +72,7 @@ export default function Map() {
             ]);
             const map = mapRef.current!;
 
+            console.log('RENDERING');
             map.fitBounds(
               [
                 new mapboxgl.LngLat(...originCoords),

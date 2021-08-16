@@ -7,6 +7,7 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "concurrently \"yarn dashboard\" \"yarn web\"",
     "dashboard": "yarn workspace dashboard dev",
     "web": "yarn workspace web dev"
   },
