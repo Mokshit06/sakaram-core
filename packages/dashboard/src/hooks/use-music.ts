@@ -70,6 +70,22 @@ const useMusic = create<MusicState>(
             name: 'Feelings',
             url: '',
           },
+          {
+            artist: { name: 'Tamino' },
+            duration: 196226,
+            image:
+              'https://i.scdn.co/image/ab67616d00004851225a21d90651e86f8cee6b19',
+            name: 'Crocodile',
+            url: '',
+          },
+          {
+            artist: { name: 'Lauv' },
+            duration: 196226,
+            image:
+              'https://i.scdn.co/image/ab67616d0000b2736047672696efe2a146cf309e',
+            name: 'Feelings',
+            url: '',
+          },
         ],
       }),
       {

@@ -36,8 +36,6 @@ function BrowserWindow() {
 
   useEffect(() => {
     if (!url) return;
-
-    console.log('SEARCJ');
   }, [url]);
 
   return (
@@ -51,7 +49,11 @@ function BrowserWindow() {
         <input ref={inputRef} />
         <button>Search</button>
       </form>
-      <iframe width="100%" height="100%" src={url} />
+      <iframe
+        width="100%"
+        height="100%"
+        src={`/api/browser?url=${encodeURIComponent(url)}`}
+      />
     </div>
   );
 }

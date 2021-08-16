@@ -1,0 +1,184 @@
+@font-face {
+  font-display: swap;
+  font-family: spotify-circular;
+  font-style: normal;
+  font-weight: 200;
+  src: url(https://open.scdn.co/cdn/fonts/CircularSpUIv3T-Light.afd9ab26.woff2)
+      format('woff2'),
+    url(https://open.scdn.co/cdn/fonts/CircularSpUIv3T-Light.2a78c017.woff)
+      format('woff'),
+    url(https://open.scdn.co/cdn/fonts/CircularSpUIv3T-Light.89e4be2e.ttf)
+      format('truetype');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: spotify-circular;
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://open.scdn.co/cdn/fonts/CircularSpUIv3T-Book.3466e0ec.woff2)
+      format('woff2'),
+    url(https://open.scdn.co/cdn/fonts/CircularSpUIv3T-Book.ea8d19db.woff)
+      format('woff'),
+    url(https://open.scdn.co/cdn/fonts/CircularSpUIv3T-Book.a357677a.ttf)
+      format('truetype');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: spotify-circular;
+  font-style: normal;
+  font-weight: 700;
+  src: url(https://open.scdn.co/cdn/fonts/CircularSpUIv3T-Bold.8d0a45cc.woff2)
+      format('woff2'),
+    url(https://open.scdn.co/cdn/fonts/CircularSpUIv3T-Bold.10e93738.woff)
+      format('woff'),
+    url(https://open.scdn.co/cdn/fonts/CircularSpUIv3T-Bold.7eb7d0f7.ttf)
+      format('truetype');
+}
+
+.container {
+  font-family: spotify-circular;
+  background-color: #121212;
+  height: 100%;
+  width: 100%;
+  color: white;
+}
+
+.base-section {
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  padding: 2rem 1.5rem;
+  width: 100%;
+}
+
+.base-section h2 {
+  margin-bottom: 1rem;
+}
+
+.header {
+  composes: base-section;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6) 0, #121212 100%),
+    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1IiBkPSJNMCAwaDMwMHYzMDBIMHoiLz48L3N2Zz4=');
+}
+
+.header h2 {
+  font-size: 2rem;
+}
+
+.playlists {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.playlist {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.1);
+  height: 80px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.playlist:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.playlistImage {
+  min-height: 80px;
+  min-width: 80px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.playlistImage img {
+  height: 100%;
+  width: 100%;
+}
+
+.playlistInfo {
+  color: #fff;
+  flex: 1;
+  justify-content: space-between;
+  padding: 16px;
+  align-items: center;
+  display: flex;
+}
+
+.playlistInfo p {
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: 24px;
+  text-transform: none;
+}
+
+.section {
+  composes: base-section;
+}
+
+.section h2 {
+  font-size: 26px;
+}
+
+.media {
+  background: #181818;
+  border-radius: 4px;
+  flex: 1;
+  isolation: isolate;
+  padding: 16px;
+  position: relative;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.media > div {
+  height: 100%;
+}
+
+.mediaImage {
+  margin-bottom: 16px;
+}
+
+.mediaImage img {
+  width: 100%;
+}
+
+.mediaInfo {
+  min-height: 62px;
+}
+
+.mediaName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: 24px;
+  text-transform: none;
+}
+
+.mediaDescription {
+  color: rgb(179, 179, 179);
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-top: 4px;
+  white-space: normal;
+}
+
+.medias {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+}
